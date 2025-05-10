@@ -15,6 +15,9 @@ readme = "README.md"
 # # homepage = "https://github.com/peterkinget/MOSbiusCADFlow"
 # ]
 requires-python = ">=3.6"
+dependencies = [
+    "setuptools"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/peterkinget/MOSbiusCADFlow"

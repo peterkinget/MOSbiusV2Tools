@@ -52,7 +52,15 @@ Alternatively, if you're inside the MOSbiusV2Tools directory, you can run:
 python test_installation.py
 ```
 
-This will run tests with the example files to ensure that all command-line tools are functioning properly.
+If you haven't installed the package yet but want to test it directly from the source code, you can use development mode:
+
+```bash
+python test_installation.py --dev
+```
+
+These tests will run with the example files to ensure that all command-line tools are functioning properly.
+
+> Note: If you encounter an error about `pkg_resources` not being available, you can install it with `pip install setuptools`. However, the test script should still work without this package, as it contains fallback methods.
 
 ## Command-line Tools
 

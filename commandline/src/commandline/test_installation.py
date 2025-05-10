@@ -8,33 +8,72 @@ import sys
 import shutil
 import tempfile
 import subprocess
-import pkg_resources
+import importlib.util
+
+# Try to import pkg_resources, but handle the case when it's not available
+try:
+    import pkg_resources
+    HAS_PKG_RESOURCES = True
+except ImportError:
+    HAS_PKG_RESOURCES = False
 
 def check_package_installed():
     """Check if the package is properly installed."""
+    if HAS_PKG_RESOURCES:
+        try:
+            pkg_resources.get_distribution("mosbiusv2tools")
+            print("✓ MOSbiusV2Tools package is installed")
+            return True
+        except pkg_resources.DistributionNotFound:
+            pass
+    
+    # Alternative check methods when pkg_resources is not available
     try:
-        pkg_resources.get_distribution("mosbiusv2tools")
-        print("✓ MOSbiusV2Tools package is installed")
-        return True
-    except pkg_resources.DistributionNotFound:
-        print("✗ MOSbiusV2Tools package is not installed")
-        return False
+        # Check if we can import the commandline module
+        if importlib.util.find_spec("commandline") is not None:
+            print("✓ MOSbiusV2Tools package is installed")
+            return True
+        
+        # Check if the command-line tools are in PATH
+        for cmd in ["generate_sizes_probe_subckt", "generate_pins_to_RBUS_SBUS_subckt", "generate_switch_matrix_probe_subckt"]:
+            if shutil.which(cmd) is not None:
+                print("✓ MOSbiusV2Tools command-line tools are available")
+                return True
+    except ImportError:
+        pass
+    
+    print("✗ MOSbiusV2Tools package is not installed or not in PYTHONPATH")
+    return False
 
 def check_command_available(command):
     """Check if a command is available in the PATH."""
     return shutil.which(command) is not None
 
-def run_test(command, input_file, output_file):
+def run_test(command, input_file, output_file, dev_mode=False):
     """Run a command and check if it executes without errors."""
-    if not check_command_available(command):
-        print(f"✗ Command '{command}' is not available in PATH")
-        return False
+    # In development mode, use python -m to run the commands
+    if dev_mode:
+        cmd_parts = command.split('_')
+        module_name = '.'.join(cmd_parts)
+        cmd_list = [sys.executable, '-m', f'commandline.{module_name}']
+        cmd_display = f"python -m commandline.{module_name}"
+    else:
+        if not check_command_available(command):
+            print(f"✗ Command '{command}' is not available in PATH")
+            print(f"  Try installing the package with: pip install -e .")
+            print(f"  Or run this script in development mode: python -m commandline.test_installation --dev")
+            return False
+        cmd_list = [command]
+        cmd_display = command
     
-    print(f"Running: {command} {input_file} {output_file}")
+    # Add input and output file arguments
+    cmd_list.extend([input_file, output_file])
+    
+    print(f"Running: {cmd_display} {input_file} {output_file}")
     
     try:
         result = subprocess.run(
-            [command, input_file, output_file], 
+            cmd_list, 
             stdout=subprocess.PIPE, 
             stderr=subprocess.PIPE,
             text=True,
@@ -53,10 +92,109 @@ def run_test(command, input_file, output_file):
         print(f"✗ {command} failed with error:")
         print(e.stderr)
         return False
+    except FileNotFoundError:
+        print(f"✗ Could not find Python module for {command}")
+        if dev_mode:
+            print("  Make sure you're running from the correct directory")
+        return False
+
+def find_examples_directory():
+    """Find the examples directory with required test files."""
+    # Function to check if directory has all required example files
+    def has_required_examples(directory):
+        if not os.path.exists(directory):
+            return False, set()
+        required_files = {
+            "all_transistors_4x_sizes.json",
+            "INV_string_5_RBUS.json",
+            "INV_string_clocked_RBUS_SBUS.json"
+        }
+        found_files = set(f for f in os.listdir(directory) if f in required_files)
+        return found_files == required_files, found_files
+    
+    # Find examples directory
+    examples_dir = None
+    example_locations = []
+    best_match_count = 0
+    best_match_dir = None
+    
+    # Option 1: Check relative to script location
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Build list of locations to search
+    search_paths = [
+        (os.path.join(script_dir, 'examples'), "standard examples directory"),
+        (os.path.join(script_dir, 'circuit_json_examples'), "circuit examples directory"),
+        (os.path.join(script_dir, '..', '..', '..', '..', 'examples'), "root examples directory"),
+        (os.path.join(script_dir, '..', '..', '..', '..', 'commandline/circuit_json_examples'), "root circuit examples directory"),
+        (os.path.join(os.getcwd(), 'examples'), "examples in current directory"),
+        (os.path.join(os.getcwd(), 'commandline/circuit_json_examples'), "circuit examples in current directory"),
+    ]
+    
+    # Add package installation locations if pkg_resources is available
+    if HAS_PKG_RESOURCES:
+        try:
+            package_dir = os.path.dirname(pkg_resources.resource_filename('commandline', '__init__.py'))
+            search_paths.extend([
+                (os.path.join(package_dir, 'examples'), "installed package examples"),
+                (os.path.join(package_dir, 'circuit_json_examples'), "installed package circuit examples"),
+                (os.path.join(os.path.dirname(package_dir), 'examples'), "package parent examples"),
+            ])
+        except (ImportError, FileNotFoundError):
+            pass
+    
+    # Check all possible locations
+    for path, description in search_paths:
+        if os.path.exists(path):
+            has_all, found_files = has_required_examples(path)
+            example_locations.append({
+                'path': path,
+                'description': description,
+                'files': found_files
+            })
+            if has_all:
+                examples_dir = path
+                break
+            elif len(found_files) > best_match_count:
+                best_match_count = len(found_files)
+                best_match_dir = path
+    
+    if examples_dir is not None:
+        print(f"✓ Found complete examples directory at {examples_dir}")
+        return examples_dir
+    
+    # If we didn't find a complete set, provide detailed feedback
+    print("\n✗ Could not find directory with all required example files")
+    print("\nSearched locations:")
+    for loc in example_locations:
+        print(f"\n- {loc['description']}:")
+        print(f"  Path: {loc['path']}")
+        if loc['files']:
+            print("  Found files:")
+            for f in sorted(loc['files']):
+                print(f"    ✓ {f}")
+        else:
+            print("  No example files found")
+    
+    print("\nRequired files:")
+    print("- all_transistors_4x_sizes.json")
+    print("- INV_string_5_RBUS.json")
+    print("- INV_string_clocked_RBUS_SBUS.json")
+    
+    if best_match_dir:
+        print(f"\nBest partial match was in: {best_match_dir}")
+        print("Consider copying missing files to this location.")
+    
+    return None
 
 def main():
     """Run the installation tests."""
-    print("Testing MOSbiusV2Tools installation...\n")
+    # Check for development mode flag
+    dev_mode = '--dev' in sys.argv
+    if dev_mode:
+        print("Testing MOSbiusV2Tools in development mode...\n")
+    else:
+        print("Testing MOSbiusV2Tools installation...\n")
     
     if not check_package_installed():
         print("\nPlease install the package using:")
@@ -64,44 +202,9 @@ def main():
         return 1
     
     # Find examples directory
-    examples_dir = None
-    
-    # Option 1: Check relative to script location
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    if os.path.exists(os.path.join(script_dir, 'examples')):
-        examples_dir = os.path.join(script_dir, 'examples')
-    
-    # Option 2: Check for examples in standard locations
-    search_paths = [
-        script_dir,                     # Current directory
-        os.path.join(script_dir, '..'), # Parent directory
-        os.path.dirname(script_dir),    # Another form of parent
-        os.getcwd(),                    # Working directory
-    ]
-    
-    for path in search_paths:
-        if examples_dir is None and os.path.exists(os.path.join(path, 'examples')):
-            examples_dir = os.path.join(path, 'examples')
-            break
-    
-    # Option 3: Check in package directory
+    examples_dir = find_examples_directory()
     if examples_dir is None:
-        try:
-            # Try to find examples relative to the installed package
-            package_dir = os.path.dirname(pkg_resources.resource_filename('commandline', '__init__.py'))
-            for check_dir in [package_dir, os.path.dirname(package_dir), os.path.dirname(os.path.dirname(package_dir))]:
-                if os.path.exists(os.path.join(check_dir, 'examples')):
-                    examples_dir = os.path.join(check_dir, 'examples')
-                    break
-        except (pkg_resources.DistributionNotFound, FileNotFoundError):
-            pass
-    
-    if examples_dir is None:
-        print("✗ Examples directory not found")
-        print("Please run this script from the MOSbiusV2Tools root directory")
         return 1
-    
-    print(f"✓ Found examples directory at {examples_dir}")
     
     # Create a temporary directory for test outputs
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -129,17 +232,17 @@ def main():
         # Test 1: generate_sizes_probe_subckt
         sizes_file = os.path.join(examples_dir, "all_transistors_4x_sizes.json")
         sizes_output = os.path.join(tmp_dir, "test_sizes_output.cir")
-        test1_ok = run_test("generate_sizes_probe_subckt", sizes_file, sizes_output)
+        test1_ok = run_test("generate_sizes_probe_subckt", sizes_file, sizes_output, dev_mode)
         
         # Test 2: generate_pins_to_RBUS_SBUS_subckt
         circuit_file = os.path.join(examples_dir, "INV_string_5_RBUS.json")
         rbus_output = os.path.join(tmp_dir, "test_rbus_output.cir")
-        test2_ok = run_test("generate_pins_to_RBUS_SBUS_subckt", circuit_file, rbus_output)
+        test2_ok = run_test("generate_pins_to_RBUS_SBUS_subckt", circuit_file, rbus_output, dev_mode)
         
         # Test 3: generate_switch_matrix_probe_subckt
         switch_circuit_file = os.path.join(examples_dir, "INV_string_clocked_RBUS_SBUS.json")
         switch_output = os.path.join(tmp_dir, "test_switch_output.cir")
-        test3_ok = run_test("generate_switch_matrix_probe_subckt", switch_circuit_file, switch_output)
+        test3_ok = run_test("generate_switch_matrix_probe_subckt", switch_circuit_file, switch_output, dev_mode)
         
         # Print summary
         print("\nTest Summary:")
@@ -152,6 +255,22 @@ def main():
             return 0
         else:
             print("\n✗ Some tests failed. Please check the error messages above.")
+            
+            # Add helpful installation instructions
+            if not dev_mode and not check_command_available("generate_sizes_probe_subckt"):
+                print("\nSolution: The package doesn't appear to be installed properly.")
+                print("You can either:")
+                print("1. Test directly in development mode:")
+                print("    python -m commandline.test_installation --dev")
+                print("\n2. Install in development mode from source:")
+                print("    pip install -e .")
+                print("\n3. Install from GitHub:")
+                print("    pip install git+https://github.com/peterkinget/MOSbiusV2Tools.git")
+            elif dev_mode:
+                print("\nMake sure you are running from the correct directory and all dependencies are installed.")
+                print("Consider installing in development mode:")
+                print("    pip install -e .")
+            
             return 1
 
 if __name__ == "__main__":
