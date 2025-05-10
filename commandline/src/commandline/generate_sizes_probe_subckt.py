@@ -54,9 +54,8 @@ def generate_sizes_probe_subckt(sizes_file, output_spice_file):
     with open(output_spice_file, "w") as f:
         # Write the SPICE header
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        f.write(f"* Generated PK_set_sizes netlist\n")
-        f.write(f"*   for {sizes_file}\n")
-        f.write(f"*   on {current_time}\n\n")
+        f.write(f"* File created on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"* From {circuit_file}\n" + spice_template + "\n")
 
         # Write the subckt header from the template file
         f.write(subckt_header + "\n")

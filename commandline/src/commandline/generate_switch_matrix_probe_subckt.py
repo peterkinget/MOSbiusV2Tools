@@ -33,7 +33,7 @@ def generate_switch_matrix_probe_subckt(circuit_json_path, output_path):
         # Write the SPICE template header
         creation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         output_file.writelines(f"* File created on: {creation_time}\n")
-        output_file.writelines(f"* From this circuit description: {circuit_json_path}\n")
+        output_file.writelines(f"* From {circuit_json_path}\n")
         output_file.writelines(spice_header)
 
         # Track connected probes
