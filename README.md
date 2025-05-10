@@ -3,27 +3,27 @@
 Tools for the MOSbiusV2. 
 
 ## Overview
-MOSbiusV2Tools is a Python package that provides command-line tools for generating SPICE subcircuits from JSON circuit descriptions and sizing files. It facilitates the mapping of circuit components to switch matrix pins and registers, enabling efficient simulation of electronic circuits.
+MOSbiusV2Tools is a Python package that provides command-line tools for generating SPICE subcircuits from JSON circuit descriptions and sizing files. It facilitates the mapping of circuit components to switch matrix pins and registers, enabling efficient simulation of the MOSbiusV2 chip.
 
 ## Installation
 
 ### Installing from GitHub
 
+> 💡 It's recommended to install this package inside a [virtual environment](https://docs.python.org/3/library/venv.html) to avoid conflicts with other Python packages on your system.
+
 You can install the package directly from GitHub using pip:
 
 ```bash
-pip install git+https://github.com/peterkinget/MOSbiusCADFlow.git@MOSbiusV2Tools_pkdist#subdirectory=MOSbiusV2Tools
+pip install git+https://github.com/peterkinget/MOSbiusV2Tools.git
 ```
-
-This branch contains fixes for properly including the required configuration and template files in the installation.
 
 ### Installing from Source
 
 Alternatively, you can clone the repository and install the package from source:
 
 ```bash
-git clone https://github.com/peterkinget/MOSbiusCADFlow.git
-cd MOSbiusCADFlow/MOSbiusV2Tools
+git clone https://github.com/peterkinget/MOSbiusV2Tools.git
+cd MOSbiusV2Tools
 pip install .
 ```
 
@@ -38,6 +38,22 @@ python -m build
 
 This will create wheel and source distributions in the `dist` directory.
 
+### Verifying Installation
+
+After installation, you can run the test script to verify that all components are working correctly:
+
+```bash
+test_mosbius_installation
+```
+
+Alternatively, if you're inside the MOSbiusV2Tools directory, you can run:
+
+```bash
+python test_installation.py
+```
+
+This will run tests with the example files to ensure that all command-line tools are functioning properly.
+
 ## Command-line Tools
 
 The package provides three main command-line tools:
@@ -47,6 +63,8 @@ The package provides three main command-line tools:
 3. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file for PROBE connections.
 
 ## Usage
+
+The folder `MOSbiusV2Tools/examples` has examples of the JSON files with sizes and circuit descriptions. The format is also described below. 
 
 ### Device Sizing
 
