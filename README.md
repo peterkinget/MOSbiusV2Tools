@@ -40,27 +40,21 @@ This will create wheel and source distributions in the `dist` directory.
 
 ### Verifying Installation
 
-After installation, you can run the test script to verify that all components are working correctly:
+After installing the package, you can verify that all components are working correctly by running:
 
 ```bash
-test_mosbius_installation
+test_mosbiusv2tools_installation
 ```
 
-Alternatively, if you're inside the MOSbiusV2Tools directory, you can run:
+For developers working with the source code, you can test directly using:
 
 ```bash
-python test_installation.py
-```
-
-If you haven't installed the package yet but want to test it directly from the source code, you can use development mode:
-
-```bash
-python test_installation.py --dev
+python -m commandline.test_installation --dev
 ```
 
 These tests will run with the example files to ensure that all command-line tools are functioning properly.
 
-> Note: If you encounter an error about `pkg_resources` not being available, you can install it with `pip install setuptools`. However, the test script should still work without this package, as it contains fallback methods.
+> Note: If you encounter an error about `pkg_resources` not being available, you can install it with `pip install setuptools`. However, the test script will still work without this package, as it contains fallback methods.
 
 ## Command-line Tools
 

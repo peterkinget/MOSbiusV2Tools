@@ -26,7 +26,7 @@ dependencies = [
 generate_sizes_probe_subckt = "commandline.generate_sizes_probe_subckt:main"
 generate_switch_matrix_probe_subckt = "commandline.generate_switch_matrix_probe_subckt:main"
 generate_pins_to_RBUS_SBUS_subckt = "commandline.generate_pins_to_RBUS_SBUS_subckt:main"
-test_mosbius_installation = "commandline.test_installation:main"
+test_mosbiusv2tools_installation = "commandline.test_installation:main"
 
 [tool.setuptools]
 package-dir = {"" = "commandline/src"}
