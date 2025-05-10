@@ -43,4 +43,4 @@ include = ["commandline", "commandline.*"]
 ]
 
 [tool.setuptools.data-files]
-"examples" = ["examples/*.json"]
+"mosbiusv2tools_examples" = ["examples/*.json"]

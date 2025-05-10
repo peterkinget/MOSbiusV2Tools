@@ -66,7 +66,7 @@ The package provides three main command-line tools:
 
 ## Usage
 
-The folder `MOSbiusV2Tools/examples` has examples of the JSON files with sizes and circuit descriptions. The format is also described below. 
+Example JSON files are installed in the `mosbiusv2tools_examples` directory when you install the package. The format is described below. 
 
 ### Device Sizing
 
@@ -305,7 +305,7 @@ Fill in the sizes `0, 1, 2, ... 31` for the respective devices in the file. If y
 
 ## Examples
 
-Example JSON files are provided in the `examples` directory:
+Example JSON files are provided in the `mosbiusv2tools_examples` directory when you install the package:
 
 - `INV_string_5_RBUS.json` - Example circuit description using RBUS connections
 - `INV_string_clocked_RBUS_SBUS.json` - Example with both RBUS and SBUS connections

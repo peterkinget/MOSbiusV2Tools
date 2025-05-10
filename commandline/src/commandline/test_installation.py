@@ -123,11 +123,13 @@ def find_examples_directory():
     
     # Build list of locations to search
     search_paths = [
-        (os.path.join(script_dir, 'examples'), "standard examples directory"),
+        (os.path.join(script_dir, 'mosbiusv2tools_examples'), "standard package examples directory"),
+        (os.path.join(script_dir, 'examples'), "legacy examples directory"),
         (os.path.join(script_dir, 'circuit_json_examples'), "circuit examples directory"),
         (os.path.join(script_dir, '..', '..', '..', '..', 'examples'), "root examples directory"),
         (os.path.join(script_dir, '..', '..', '..', '..', 'commandline/circuit_json_examples'), "root circuit examples directory"),
-        (os.path.join(os.getcwd(), 'examples'), "examples in current directory"),
+        (os.path.join(os.getcwd(), 'mosbiusv2tools_examples'), "examples in current directory"),
+        (os.path.join(os.getcwd(), 'examples'), "legacy examples in current directory"),
         (os.path.join(os.getcwd(), 'commandline/circuit_json_examples'), "circuit examples in current directory"),
     ]
     
@@ -136,9 +138,10 @@ def find_examples_directory():
         try:
             package_dir = os.path.dirname(pkg_resources.resource_filename('commandline', '__init__.py'))
             search_paths.extend([
-                (os.path.join(package_dir, 'examples'), "installed package examples"),
+                (os.path.join(package_dir, 'mosbiusv2tools_examples'), "installed package examples"),
+                (os.path.join(package_dir, 'examples'), "legacy installed package examples"),
                 (os.path.join(package_dir, 'circuit_json_examples'), "installed package circuit examples"),
-                (os.path.join(os.path.dirname(package_dir), 'examples'), "package parent examples"),
+                (os.path.join(os.path.dirname(package_dir), 'mosbiusv2tools_examples'), "package parent examples"),
             ])
         except (ImportError, FileNotFoundError):
             pass
