@@ -1,4 +1,3 @@
 include commandline/src/commandline/chip_config_data/*.json
 include commandline/src/commandline/subckt_templates/*.cir
 include examples/*.json
-include test_installation.py
