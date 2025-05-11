@@ -1,6 +1,5 @@
 * "spice" description for "MOSbius_v2_tb", "PK_pins_to_RBUS_SWBUS", "spice" 
 
-
 simulator lang=spice
 
 .SUBCKT PK_pins_to_RBUS_SWBUS RBUS<1> RBUS<2> RBUS<3> RBUS<4> RBUS<5> RBUS<6>

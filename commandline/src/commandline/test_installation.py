@@ -121,13 +121,22 @@ def find_examples_directory():
     # Option 1: Check relative to script location
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
+    # Get absolute path to MOSbiusV2Tools root
+    script_full_path = os.path.abspath(script_dir)
+    print(f"Script directory: {script_full_path}")
+    # Go up to the commandline folder's parent - MOSbiusV2Tools
+    mosbius_root = os.path.normpath(os.path.join(script_dir, '..', '..', '..', '..', '..', '..'))
+    print(f"Mosbius root: {mosbius_root}")
+    mosbius_v2_tools_root = os.path.join(mosbius_root, 'MOSbiusV2Tools')
+    print(f"MOSbiusV2Tools root: {mosbius_v2_tools_root}")
+    print(f"Examples should be in: {os.path.join(mosbius_v2_tools_root, 'examples')}")
+    
     # Build list of locations to search
     search_paths = [
+        (os.path.join(mosbius_root, 'examples'), "MOSbiusV2Tools examples directory"),
         (os.path.join(script_dir, 'mosbiusv2tools_examples'), "standard package examples directory"),
         (os.path.join(script_dir, 'examples'), "legacy examples directory"),
         (os.path.join(script_dir, 'circuit_json_examples'), "circuit examples directory"),
-        (os.path.join(script_dir, '..', '..', '..', '..', 'examples'), "root examples directory"),
-        (os.path.join(script_dir, '..', '..', '..', '..', 'commandline/circuit_json_examples'), "root circuit examples directory"),
         (os.path.join(os.getcwd(), 'mosbiusv2tools_examples'), "examples in current directory"),
         (os.path.join(os.getcwd(), 'examples'), "legacy examples in current directory"),
         (os.path.join(os.getcwd(), 'commandline/circuit_json_examples'), "circuit examples in current directory"),
@@ -147,8 +156,11 @@ def find_examples_directory():
             pass
     
     # Check all possible locations
+    print("\nSearching in paths:")
     for path, description in search_paths:
+        print(f"Checking {description}:\n{path}")
         if os.path.exists(path):
+            print("  Path exists")
             has_all, found_files = has_required_examples(path)
             example_locations.append({
                 'path': path,
@@ -218,7 +230,8 @@ def main():
         example_files = {
             "all_transistors_4x_sizes.json": False,
             "INV_string_5_RBUS.json": False,
-            "INV_string_clocked_RBUS_SBUS.json": False
+            "INV_string_clocked_RBUS_SBUS.json": False,
+            "INV_string_12_NODE.json": False
         }
         
         for file in os.listdir(examples_dir):
@@ -247,13 +260,19 @@ def main():
         switch_output = os.path.join(tmp_dir, "test_switch_output.cir")
         test3_ok = run_test("generate_switch_matrix_probe_subckt", switch_circuit_file, switch_output, dev_mode)
         
+        # Test 4: generate_nodes_subckt
+        nodes_circuit_file = os.path.join(examples_dir, "INV_string_12_NODE.json")
+        nodes_output = os.path.join(tmp_dir, "test_nodes_output.cir")
+        test4_ok = run_test("generate_nodes_subckt", nodes_circuit_file, nodes_output, dev_mode)
+        
         # Print summary
         print("\nTest Summary:")
         print(f"- Generate Sizes Probe Subcircuit: {'PASS' if test1_ok else 'FAIL'}")
         print(f"- Generate Pins to RBUS/SBUS Subcircuit: {'PASS' if test2_ok else 'FAIL'}")
         print(f"- Generate Switch Matrix Probe Subcircuit: {'PASS' if test3_ok else 'FAIL'}")
+        print(f"- Generate Nodes Subcircuit: {'PASS' if test4_ok else 'FAIL'}")
         
-        if test1_ok and test2_ok and test3_ok:
+        if test1_ok and test2_ok and test3_ok and test4_ok:
             print("\n✓ All tests passed! MOSbiusV2Tools is correctly installed.")
             return 0
         else:

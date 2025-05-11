@@ -1,6 +1,5 @@
 * "spice" description for "MOSbius_v2_tb", "PK_set_SWMATRIX", "spice" 
 
-
 simulator lang=spice
 
 .SUBCKT PK_set_SWMATRIX PROBE<1> PROBE<2> PROBE<3> PROBE<4> PROBE<5> PROBE<6>
