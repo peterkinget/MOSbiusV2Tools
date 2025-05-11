@@ -58,11 +58,12 @@ These tests will run with the example files to ensure that all command-line tool
 
 ## Command-line Tools
 
-The package provides three main command-line tools:
+The package provides four main command-line tools:
 
 1. **`generate_sizes_probe_subckt`** - Generates a SPICE subcircuit file based on device sizes.
 2. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file connecting chip pins to RBUS and SBUS nodes.
 3. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file for PROBE connections.
+4. **`generate_nodes_subckt`** - Generates a SPICE subcircuit file connecting chip pins to NODE nodes.
 
 ## Usage
 
@@ -84,6 +85,12 @@ generate_pins_to_RBUS_SBUS_subckt circuit.json output_spice_file.cir
 
 ```bash
 generate_switch_matrix_probe_subckt circuit.json output_spice_file.cir
+```
+
+### Connecting Pins to NODE Nodes
+
+```bash
+generate_nodes_subckt circuit.json output_spice_file.cir
 ```
 
 ## Circuit Description
