@@ -40,6 +40,8 @@ This will create wheel and source distributions in the `dist` directory.
 
 ### Verifying Installation
 
+> ⚠️ The verification scripts currently do not work ⚠️
+
 After installing the package, you can verify that all components are working correctly by running:
 
 ```bash
