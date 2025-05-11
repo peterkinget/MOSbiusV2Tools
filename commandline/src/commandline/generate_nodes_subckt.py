@@ -13,7 +13,7 @@ def generate_nodes_subckt(circuit_file, output_spice_file):
     # Define the paths to the necessary support files
     chip_config_dir = os.path.join(os.path.dirname(__file__), "chip_config_data")
     pin_mapping_file = os.path.join(chip_config_dir, "pin_name_to_number.json")
-    subckt_template_file = os.path.join(os.path.dirname(__file__), "..", "subckt_templates", "PK_NODE_external_connections_template.cir")
+    subckt_template_file = os.path.join(os.path.dirname(__file__), "subckt_templates", "PK_NODE_external_connections_template.cir")
 
     print(f"Looking for pin mapping file at: {pin_mapping_file}")
     print(f"Looking for template file at: {subckt_template_file}")
