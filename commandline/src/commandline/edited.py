@@ -48,7 +48,6 @@ def generate_switch_matrix_probe_subckt(circuit_json_path, output_path):
                     if sw_matrix_pin is None:
                         print(f"Warning: Pin '{pin}' not found in pin-to-switch matrix mapping")
                         continue
-                    # Support both numeric and string sw_matrix_pin
                     if isinstance(sw_matrix_pin, str):
                         register = sw_matrix_to_register.get(sw_matrix_pin, {}).get(bus, None)
                     else:
@@ -75,7 +74,6 @@ def generate_switch_matrix_probe_subckt(circuit_json_path, output_path):
                     if sw_matrix_pin is None:
                         print(f"Warning: Pin '{terminal}' not found in pin-to-switch matrix mapping")
                         continue
-                    # Support both numeric and string sw_matrix_pin
                     if not isinstance(sw_matrix_pin, str):
                         sw_matrix_pin = str(int(sw_matrix_pin))
                     register_a = sw_matrix_to_register.get(sw_matrix_pin, {}).get(sbus_a, None)
