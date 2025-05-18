@@ -22,11 +22,11 @@
 	"CC_N_G_CC"
     ],
     "SBUS1": [
-	{"terminal": "A", "connection": "ON"}
+	{"terminal": "internal_A", "connection": "ON"}
     ], 
     "SBUS2": [
         {"terminal": "OTA_N_INN", "connection": "PHI2"},
-        {"terminal": "A", "connection": "PHI1"}
+        {"terminal": "internal_A", "connection": "PHI1"}
     ],
     "SBUS3": [
         {"terminal": "OTA_N_INP", "connection": "PHI2"},
@@ -35,10 +35,10 @@
     "SBUS4": [
         {"terminal": "DINV1_OUT_L", "connection": "ON"},
         {"terminal": "OTA_N_INP", "connection": "PHI1"},
-        {"terminal": "B", "connection": "PHI2"}
+        {"terminal": "internal_B", "connection": "PHI2"}
     ],
     "SBUS5": [
-        {"terminal": "B", "connection": "ON"}
+        {"terminal": "internal_B", "connection": "ON"}
     ]
 
 }
