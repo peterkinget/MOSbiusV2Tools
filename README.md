@@ -46,10 +46,10 @@ python -m commandline.test_installation
 
 The package provides four main command-line tools:
 
-1. **`generate_sizes_probe_subckt`** - Generates a SPICE subcircuit file to set the device sizes.
-2. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file to set the PROBE connections that control the switch matrix.
-2. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file connecting chip pins to RBUS and SBUS "PCB" nodes for easy observation.
-4. **`generate_nodes_subckt`** - Generates a SPICE subcircuit file connecting chip pins to NODE "PCB" nodes for easy observation.
+1. **`generate_sizes_probe_subckt`** - Generates a SPICE subcircuit file for the **PK_set_sizes_2** cell in the **PK_utils** category in the cadence library; it sets the device sizes.
+2. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file for the **PK_set_SWMATRIX** cell in the **PK_utils** category in the cadence library; it sets the PROBE connections that control the switch matrix.
+2. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file for the **PK_pins_to_RBUS_SWBUS** cell in the **PK_utils** category in the cadence library; it connects chip pins to RBUS and SBUS "PCB" nodes for easy observation.
+4. **`generate_nodes_subckt`** - Generates a SPICE subcircuit file for the **PK_NODE_external_connections** cell in the **PK_utils** category in the cadence library; it connects chip pins to NODE "PCB" nodes for easy observation.
 
 ## Usage
 
@@ -78,11 +78,26 @@ generate_nodes_subckt examples/INV_string_12_NODE.json output_nodes_spice.cir
 generate_pins_to_RBUS_SBUS_subckt examples/INV_string_5_RBUS.json output_rbus_sbus_spice.cir
 ```
 
+You can now use these *spice subckts* to define different 'Spice' versions of the cells which you can select using the *config editor* in Cadence to simulate different circuits. Take a look at the *PK_die_wrapper_everything* for an example that uses all cells and subcircuits. 
+
+### Example Schematics
+
+#### Top Level
+
+This is a top-level schematic for the switched-capacitor amplifier test bench using the *PK_die_wrapper_everything* cell and adding the external components, supplies, control signals, and bias. 
+
+![alt text](img/image-1.png)
+
+#### PK_die_wrapper_everything cell
+![alt text](img/image.png)
+
+The four subckts are instantiated here. Using the *MOSbiusV2Tools* scripts you can generate the necessary *spiceText subckt* descriptions from your `circuit.json` (see below).
+
 ## Circuit Description
 
-Create a `.json` file to describe the circuit connectivity that the on-chip switch matrix needs to implement. 
+Create a `.json` file to describe the circuit connectivity that the on-chip switch matrices *RBUS* and *SBUS* or the external *NODES* needs to implement. 
 
-All terminals of the devices are connected to pins of the chip. The pin mappings are defined in the `pin_name_to_sw_matrix_pin_number.json` file, located in the `commandline/chip_config_data/` directory. Here's an excerpt:
+All terminals of the devices are connected to pins of the chip. The pin mappings are defined in the `pin_name_to_sw_matrix_pin_number.json` file, located in the `commandline/chip_config_data/` directory:
 
 ```json
 {
@@ -233,6 +248,57 @@ One `circuit.json` file contains the whole circuit connections description for t
 ### Internal BUSes
 
 There are four internal buses `internal_A` thru `internal_D`. They can be used like pins in the `terminal` declarations, however they are not connected to the outside world. They main targeted use is to connect to an "SBUS" so that switched connections can be made between SBUSes that are not connected to other pins. 
+
+### Everything
+
+Below is the example of a switched capacitor integrator circuit that uses all BUSes, internal pins, and external NODE connections; the NODE connections just facilitate the simulation setup and do not require you to use particular `pin<>` numbers:
+
+```json
+{
+    "NODE<1>": [
+	"OTA_N_INP"
+    ],
+    "NODE<2>": [
+	"OTA_N_INN"
+    ],
+    "NODE<3>": [
+	"CLK"
+    ],
+    "RBUS1": [
+	"OTA_N_OUT",
+	"DINV1_INP_L"
+    ],
+    "RBUS2": [
+	"CC_N_G_CS",
+	"CC_N_D_CC",
+	"DINV1_INN_L"
+    ],
+    "RBUS8": [
+	"VDD", 
+	"CC_N_G_CC"
+    ],
+    "SBUS1": [
+	{"terminal": "internal_A", "connection": "ON"}
+    ], 
+    "SBUS2": [
+        {"terminal": "OTA_N_INN", "connection": "PHI2"},
+        {"terminal": "internal_A", "connection": "PHI1"}
+    ],
+    "SBUS3": [
+        {"terminal": "OTA_N_INP", "connection": "PHI2"},
+        {"terminal": "OTA_N_INN", "connection": "PHI1"}
+    ],
+    "SBUS4": [
+        {"terminal": "DINV1_OUT_L", "connection": "ON"},
+        {"terminal": "OTA_N_INP", "connection": "PHI1"},
+        {"terminal": "internal_B", "connection": "PHI2"}
+    ],
+    "SBUS5": [
+        {"terminal": "internal_B", "connection": "ON"}
+    ]
+
+}
+```
 
 ### Transistor Sizing
 
