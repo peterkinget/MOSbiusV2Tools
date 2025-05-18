@@ -505,7 +505,7 @@
         "RBUS7": "449",
         "RBUS8": "472"
     },
-    "internal_A": {
+    "internal_A": { 
         "SBUS1a": "47",
         "SBUS1b": "48",
         "SBUS2a": "95",
