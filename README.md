@@ -1,25 +1,30 @@
 # MOSbiusV2Tools
 
-Tools for the MOSbiusV2. 
+Tools for supporting the simulation of the MOSbiusV2. 
 
 ## Overview
 MOSbiusV2Tools is a Python package that provides command-line tools for generating SPICE subcircuits from JSON circuit descriptions and sizing files. It facilitates the mapping of circuit components to switch matrix pins and registers, enabling efficient simulation of the MOSbiusV2 chip.
 
 ## Installation
 
-### Installing from GitHub
-
-> 💡 It's recommended to install this package inside a [virtual environment](https://docs.python.org/3/library/venv.html) to avoid conflicts with other Python packages on your system.
-
-You can install the package directly from GitHub using pip:
+### Quick Setup with Virtual Environment (Recommended)
 
 ```bash
+# Create a virtual environment
+python -m venv venv-mosbiusv2tools
+
+# Activate the virtual environment
+source venv-mosbiusv2tools/bin/activate.csh  # for a tcsh
+
+# Install `mosbiusv2tools` directly from GitHub
 pip install git+https://github.com/peterkinget/MOSbiusV2Tools.git
+
+rehash # for a tcsh
 ```
 
-### Installing from Source
+### Alternative Installation Methods
 
-Alternatively, you can clone the repository and install the package from source:
+Install from source:
 
 ```bash
 git clone https://github.com/peterkinget/MOSbiusV2Tools.git
@@ -27,92 +32,66 @@ cd MOSbiusV2Tools
 pip install .
 ```
 
-### Building the Package
-
-If you want to build the package yourself:
-
-```bash
-cd MOSbiusV2Tools
-python -m build
-```
-
-This will create wheel and source distributions in the `dist` directory.
-
 ### Verifying Installation
 
-> ⚠️ The verification scripts currently do not work ⚠️
+<THIS DOES NOT WORK - IGNORE>
 
-After installing the package, you can verify that all components are working correctly by running:
-
-```bash
-test_mosbiusv2tools_installation
-```
-
-For developers working with the source code, you can test directly using:
+Run the test script to verify your installation:
 
 ```bash
-python -m commandline.test_installation --dev
+python -m commandline.test_installation
 ```
-
-These tests will run with the example files to ensure that all command-line tools are functioning properly.
-
-> Note: If you encounter an error about `pkg_resources` not being available, you can install it with `pip install setuptools`. However, the test script will still work without this package, as it contains fallback methods.
 
 ## Command-line Tools
 
 The package provides four main command-line tools:
 
-1. **`generate_sizes_probe_subckt`** - Generates a SPICE subcircuit file based on device sizes.
-2. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file connecting chip pins to RBUS and SBUS nodes.
-3. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file for PROBE connections.
-4. **`generate_nodes_subckt`** - Generates a SPICE subcircuit file connecting chip pins to NODE nodes.
+1. **`generate_sizes_probe_subckt`** - Generates a SPICE subcircuit file to set the device sizes.
+2. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file to set the PROBE connections that control the switch matrix.
+2. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file connecting chip pins to RBUS and SBUS "PCB" nodes for easy observation.
+4. **`generate_nodes_subckt`** - Generates a SPICE subcircuit file connecting chip pins to NODE "PCB" nodes for easy observation.
 
 ## Usage
 
-Example JSON files are installed in the `mosbiusv2tools_examples` directory when you install the package. The format is described below. 
+Example JSON files are found in the `examples` directory in the repository. The format is described below.
 
 ### Device Sizing
 
 ```bash
-generate_sizes_probe_subckt sizes.json output_spice_file.cir
-```
-
-### Connecting Pins to RBUS and SBUS
-
-```bash
-generate_pins_to_RBUS_SBUS_subckt circuit.json output_spice_file.cir
+generate_sizes_probe_subckt examples/all_transistors_4x_sizes.json output_sizes_spice.cir
 ```
 
 ### Switch Matrix Configuration
 
 ```bash
-generate_switch_matrix_probe_subckt circuit.json output_spice_file.cir
+generate_switch_matrix_probe_subckt examples/INV_string_clocked_RBUS_SBUS.json output_switch_matrix_spice.cir
 ```
 
 ### Connecting Pins to NODE Nodes
 
 ```bash
-generate_nodes_subckt circuit.json output_spice_file.cir
+generate_nodes_subckt examples/INV_string_12_NODE.json output_nodes_spice.cir
+```
+### Connecting Pins to RBUS and SBUS
+
+```bash
+generate_pins_to_RBUS_SBUS_subckt examples/INV_string_5_RBUS.json output_rbus_sbus_spice.cir
 ```
 
 ## Circuit Description
 
 Create a `.json` file to describe the circuit connectivity that the on-chip switch matrix needs to implement. 
 
-All terminals of the devices are connected to pins of the chip as listed below. 
+All terminals of the devices are connected to pins of the chip. The pin mappings are defined in the `pin_name_to_sw_matrix_pin_number.json` file, located in the `commandline/chip_config_data/` directory. Here's an excerpt:
 
-```
+```json
 {
-    "VSS": 1.0,
-    "EN": 2.0,
-    "CLK": 3.0,
-    "DATA_SBUS6": 4.0,
-    "SBUS5": 5.0,
-    "SBUS4": 6.0,
-    "SBUS3": 7.0,
-    "SBUS2": 8.0,
-    "SBUS1": 9.0,
-    "DCC1_P_D_L_CC": 10.0,
+    "internal_A": "internal_A",
+    "internal_B": "internal_B",
+    "internal_C": "internal_C",
+    "internal_D": "internal_D",
+    "VSS": 92.0,
+    "DCC1_P_D_L_CC": 1.0,
     "DCC1_P_D_R_CS": 11.0,
     "DCC1_P_D_R_CC": 12.0,
     "VDD": 13.0,
@@ -251,6 +230,10 @@ There are 6 switched buses, "SBUS1 thru "SBUS6"; these buses can make a permanen
 
 One `circuit.json` file contains the whole circuit connections description for the RBUSes and the SBUSes as shown above. 
 
+### Internal BUSes
+
+There are four internal buses `internal_A` thru `internal_D`. They can be used like pins in the `terminal` declarations, however they are not connected to the outside world. They main targeted use is to connect to an "SBUS" so that switched connections can be made between SBUSes that are not connected to other pins. 
+
 ### Transistor Sizing
 
 Create a separate `.json` file with the sizing for all the devices; here is an empty file:
@@ -312,13 +295,29 @@ Fill in the sizes `0, 1, 2, ... 31` for the respective devices in the file. If y
 }
 ```
 
-## Examples
+## Example Files
 
-Example JSON files are provided in the `mosbiusv2tools_examples` directory when you install the package:
+The repository contains various example JSON files in the `mosbiusv2tools_examples` directory:
 
-- `INV_string_5_RBUS.json` - Example circuit description using RBUS connections
-- `INV_string_clocked_RBUS_SBUS.json` - Example with both RBUS and SBUS connections
-- `all_transistors_4x_sizes.json` - Example device sizing file
+- **Circuit Configurations:**
+  - `INV_string_12_NODE.json` - First example using NODE connections, i.e. **no** on-chip BUSes are used, all connections are made externally. When you connect the input to the output of an odd stage you get a ring oscillator. 
+  - `INV_string_11_CC_RBUS_SBUS.json` - Inverter string using on-chip RBUS and static SBUS connections, which you can use to make a ring oscillator by making an external connection.
+  - `INV_string_clocked_RBUS_SBUS.json` - Circuit with a series of four inverters but connected to each other switched clocks; it uses RBUS and switched SBUS connections
+  - `sw_cap_OTA_N_DINV1_L_NODE_RBUS_SBUS.json` - Switched capacitor amplifier using a two-stage OTA and on-chip switches and external capacitors; it uses RBUSes, switched SBUSes, internal pins, and external connections via NODES to realize and observe the circuit. 
+
+- **Device Sizing:**
+  - `empty_device_name_sizes.json` - Template for new size configurations
+  - `all_transistors_4x_sizes.json` - Example device sizing file
+  - `INV_string_12_growing_sizes.json` - Example with progressively increasing transistor sizes
+  - `OTA_N_DINV1_L_sizes.json` - Sizes that can be used for the switched capacitor example
+## File Structure
+
+The project includes several important directories. Assuming you are using the `venv` with the name `venv-mosbiusv2tools` installed in your home directory `~`, the files are in the following folders; you can find the files in the GitHub repo easily as well. 
+- `~/venv-mosbiusv2tools/mosbiusv2tools_examples/` - Contains example JSON files for device sizing and circuit configurations
+- `~/venv-mosbiusv2tools/lib/python3.13/site-packages/commandline/` - Main package directory containing Python scripts (adjust name based on your python version) and with the following subfolders. 
+  - `chip_config_data/` - JSON files mapping pins to switch matrix positions
+  - `src/` - Source code for the command-line tools
+
 
 ## License
 
