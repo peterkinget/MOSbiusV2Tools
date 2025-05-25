@@ -1,0 +1,44 @@
+{
+    "NODE<1>": [
+	"OTA_N_INP"
+    ],
+    "NODE<2>": [
+	"OTA_N_INN"
+    ],
+    "NODE<3>": [
+	"CLK"
+    ],
+    "RBUS1": [
+	"OTA_N_OUT",
+	"DINV1_INP_L"
+    ],
+    "RBUS2": [
+	"CC_N_G_CS",
+	"CC_N_D_CC",
+	"DINV1_INN_L"
+    ],
+    "RBUS8": [
+	"VDD", 
+	"CC_N_G_CC"
+    ],
+    "SBUS1": [
+	{"terminal": "internal_A", "connection": "ON"}
+    ], 
+    "SBUS2": [
+        {"terminal": "OTA_N_INN", "connection": "PHI2"},
+        {"terminal": "internal_A", "connection": "PHI1"}
+    ],
+    "SBUS3": [
+        {"terminal": "OTA_N_INP", "connection": "PHI2"},
+        {"terminal": "OTA_N_INN", "connection": "PHI1"}
+    ],
+    "SBUS4": [
+        {"terminal": "DINV1_OUT_L", "connection": "ON"},
+        {"terminal": "OTA_N_INP", "connection": "PHI1"},
+        {"terminal": "internal_B", "connection": "PHI2"}
+    ],
+    "SBUS5": [
+        {"terminal": "internal_B", "connection": "ON"}
+    ]
+
+}
