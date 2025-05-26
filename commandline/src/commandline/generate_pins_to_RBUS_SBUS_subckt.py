@@ -48,13 +48,16 @@ def generate_pins_to_RBUS_SBUS_subckt(circuit_file, output_spice_file):
         # Get the pin number from the pin mapping
         pin_number = int(pin_mapping[selected_pin])
 
-        # Add a zero-volt voltage source for the connection
-        spice_subcircuit += f"V{bus}_to_pin{pin_number} {bus_with_brackets} pin<{pin_number}> 0\n"
-
         # Add a comment indicating the connection
         spice_subcircuit += f"* {bus} connected to {selected_pin} (pin<{pin_number}>)\n"
 
+        # Add a zero-volt voltage source for the connection
+        spice_subcircuit += f"V{bus}_to_pin{pin_number} {bus_with_brackets} pin<{pin_number}> 0\n"
+
     # Add SBUS connections
+    # Add a comment indicating the connection
+    spice_subcircuit += f"* connecting SBUSes\n"
+    # SBUSes are directly connected to pins
     for sbus in range(1, 7):
         if sbus == 6:
             bus = f"DATA_SBUS6"
