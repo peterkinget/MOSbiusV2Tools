@@ -62,7 +62,7 @@ def generate_nodes_subckt(circuit_file, output_spice_file):
         try:
             node_number = int(node.replace("NODE", "").strip("<>"))
         except ValueError:
-            print(f"Warning: Invalid node format '{node}', expected NODE<n>")
+            print(f"Warning: Ignoring '{node}'")
             continue
 
         # Iterate through the pin names connected to this node
