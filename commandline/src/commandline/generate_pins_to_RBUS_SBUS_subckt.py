@@ -36,10 +36,11 @@ def generate_pins_to_RBUS_SBUS_subckt(circuit_file, output_spice_file):
 
     # Iterate over each BUS in the circuit data
     for bus, pins in circuit_data.items():
-        if bus[0:4] == 'SBUS':
+        # skip the SBUS (see below) and NODES (different subckt)
+        if bus.startswith('SBUS') or bus.startswith('NODE'):
             continue
         # Replace RBUS1 with RBUS<1>, RBUS2 with RBUS<2>, etc.
-        bus_with_brackets = bus.replace("RBUS", "RBUS<").replace("SBUS", "SWBUS<") + ">"
+        bus_with_brackets = bus.replace("RBUS", "RBUS<") + ">"
 
         # Select the first pin from the list of connected pins
         selected_pin = pins[0]
