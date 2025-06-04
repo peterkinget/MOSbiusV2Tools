@@ -95,8 +95,8 @@
     "DCC4_P_G_L_CC": 94,
     "DCC4_P_G_R_CS": 95,
     "DCC4_P_G_R_CC": 96,
-    "DCC4_P_D_L_CC": 97,
-    "DCC4_P_D_L_CS": 98,
-    "DCC4_P_D_R_CC": 99,
-    "DCC4_P_D_R_CS": 100
+    "DCC4_P_D_L_CS": 97,
+    "DCC4_P_D_L_CC": 98,
+    "DCC4_P_D_R_CS": 99,
+    "DCC4_P_D_R_CC": 100
 }
