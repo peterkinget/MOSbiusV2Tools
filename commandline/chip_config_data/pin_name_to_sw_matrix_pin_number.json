@@ -1,4 +1,7 @@
-{
+{   "internal_A": "internal_A",
+    "internal_B": "internal_B",
+    "internal_C": "internal_C",
+    "internal_D": "internal_D",
     "VSS": 92,
     "OTA_P_INP": 1,
     "OTA_P_INN": 2,
@@ -83,12 +86,12 @@
     "DCC1_P_D_L_CC": 80,
     "DCC1_P_D_R_CS": 81,
     "DCC1_P_D_R_CC": 82,
-    "DCC4_P_G_L_CC": 83,
-    "DCC4_P_G_L_CS": 84,
-    "DCC4_P_G_R_CC": 85,
-    "DCC4_P_G_R_CS": 86,
-    "DCC4_P_D_L_CC": 87,
-    "DCC4_P_D_L_CS": 88,
-    "DCC4_P_D_R_CC": 89,
-    "DCC4_P_D_R_CS": 90
+    "DCC4_P_G_L_CS": 83,
+    "DCC4_P_G_L_CC": 84,
+    "DCC4_P_G_R_CS": 85,
+    "DCC4_P_G_R_CC": 86,
+    "DCC4_P_D_L_CS": 87,
+    "DCC4_P_D_L_CC": 88,
+    "DCC4_P_D_R_CS": 89,
+    "DCC4_P_D_R_CC": 90
 }
