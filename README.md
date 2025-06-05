@@ -22,7 +22,7 @@ python -m venv venv-mosbiusv2tools
 source venv-mosbiusv2tools/bin/activate.csh  # for a tcsh
 
 # Install `mosbiusv2tools` directly from GitHub
-pip install git+https://github.com/peterkinget/MOSbiusV2Tools.git
+pip install git+https://github.com/peterkinget/MOSbiusV2Tools.git@generating_scanchain_input
 
 rehash # for a tcsh
 ```
