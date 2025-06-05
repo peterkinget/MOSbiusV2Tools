@@ -26,7 +26,7 @@ pip install git+https://github.com/peterkinget/MOSbiusV2Tools.git@generating_sca
 
 rehash # for a tcsh
 ```
-
+<!-- 
 ### Alternative Installation Methods
 
 Install from source:
@@ -46,7 +46,7 @@ Run the test script to verify your installation:
 ```bash
 python -m commandline.test_installation
 ```
-
+-->
 ## Command-line Tools
 
 The package provides the following command-line tools:
