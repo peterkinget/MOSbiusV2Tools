@@ -1,10 +1,9 @@
 # MOSbiusV2Tools
 
-```{admonition} Note
-:class: info
 
-`generating_scanchain_input` branch --> adding script to generate txt file to drive PRBS source in cadence to simulate the scan chain.
-```
+> [!NOTE]
+> `generating_scanchain_input` branch --> adding script to generate txt file to 
+> drive PRBS source in cadence to simulate the scan chain.
 
 Tools for supporting the simulation of the MOSbiusV2. 
 
