@@ -28,6 +28,7 @@ generate_switch_matrix_probe_subckt = "commandline.generate_switch_matrix_probe_
 generate_pins_to_RBUS_SBUS_subckt = "commandline.generate_pins_to_RBUS_SBUS_subckt:main"
 generate_nodes_subckt = "commandline.generate_nodes_subckt:main"
 test_mosbiusv2tools_installation = "commandline.test_installation:main"
+generate_scan_chain_input = "commandline.generate_scan_chain_input:main"
 
 [tool.setuptools]
 package-dir = {"" = "commandline/src"}
