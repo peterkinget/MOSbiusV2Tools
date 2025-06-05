@@ -64,7 +64,7 @@ def main():
     import argparse
     
     # Set up command-line argument parsing
-    parser = argparse.ArgumentParser(description="Extract probe values from SPICE files and output them in a specific order.")
+    parser = argparse.ArgumentParser(description="Extract probe values from SPICE files and output them in a reversed order.")
     parser.add_argument("sw_matrix_file", help="Path to the switch matrix SPICE file (.cir)")
     parser.add_argument("sizes_file", help="Path to the sizes SPICE file (.cir)")
     parser.add_argument("output_file", help="Path to the output file to be created")
