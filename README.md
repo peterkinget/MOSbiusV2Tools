@@ -49,12 +49,14 @@ python -m commandline.test_installation
 
 ## Command-line Tools
 
-The package provides four main command-line tools:
+The package provides the following command-line tools:
 
 1. **`generate_sizes_probe_subckt`** - Generates a SPICE subcircuit file for the **PK_set_sizes_2** cell in the **PK_utils** category in the cadence library; it sets the device sizes.
 2. **`generate_switch_matrix_probe_subckt`** - Generates a SPICE subcircuit file for the **PK_set_SWMATRIX** cell in the **PK_utils** category in the cadence library; it sets the PROBE connections that control the switch matrix.
-2. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file for the **PK_pins_to_RBUS_SWBUS** cell in the **PK_utils** category in the cadence library; it connects chip pins to RBUS and SBUS "PCB" nodes for easy observation.
+3. **`generate_pins_to_RBUS_SBUS_subckt`** - Generates a SPICE subcircuit file for the **PK_pins_to_RBUS_SWBUS** cell in the **PK_utils** category in the cadence library; it connects chip pins to RBUS and SBUS "PCB" nodes for easy observation.
 4. **`generate_nodes_subckt`** - Generates a SPICE subcircuit file for the **PK_NODE_external_connections** cell in the **PK_utils** category in the cadence library; it connects chip pins to NODE "PCB" nodes for easy observation.
+5. **`generate_scan_chain_input`** - Generates a text file with binary values (0/1) for PROBE pins from a circuit and sizes JSON file, for use with **scan chain simulation**; the first line in the file corresponds to the value for PROBE<2008>.
+6. **`combine_probes_circuits_to_scan_input`** - **For debugging:** takes two SPICE circuit files (switch matrix and sizes) and generates a scan chain input file with binary values for each PROBE pin; you can compare the output of this script to the `generate_scan_chain_input` script's output. 
 
 ## Usage
 
@@ -63,7 +65,7 @@ Example JSON files are found in the `examples` directory in the repository. The 
 ### Device Sizing
 
 ```bash
-generate_sizes_probe_subckt examples/all_transistors_4x_sizes.json output_sizes_spice.cir
+generate_sizes_probe_subckt [all_transistors_4x_sizes.json](http://_vscodecontentref_/1) output_sizes_spice.cir
 ```
 
 ### Switch Matrix Configuration
@@ -371,16 +373,22 @@ Fill in the sizes `0, 1, 2, ... 31` for the respective devices in the file. If y
 The repository contains various example JSON files in the `mosbiusv2tools_examples` directory:
 
 - **Circuit Configurations:**
+  
+  - `template_circuit_RBUS_SBUS.json` - an empty template for a circuit using RBUSes and SBUSes.
+  - `all_INV_RBUS_SBUS_v4.json` - all DCC blocks are used to create a chain of inverters; the OTAs are placed at the end of the chain as comparators; OTA_P is non-inverting, OTA_N is inverting; the CC_N block is used for OTA biasing; the CC_P block is configured as a source follower; the circuit uses all RBUSes and all SBUSes and a few external NODES.
+  - `sw_cap_OTA_N_DINV1_L_NODE_RBUS_SBUS.json` - Switched capacitor amplifier using a two-stage OTA and on-chip switches and external capacitors; it uses RBUSes, switched SBUSes, internal pins, and external connections via NODES to realize and observe the circuit. 
   - `INV_string_12_NODE.json` - First example using NODE connections, i.e. **no** on-chip BUSes are used, all connections are made externally. When you connect the input to the output of an odd stage you get a ring oscillator. 
   - `INV_string_11_CC_RBUS_SBUS.json` - Inverter string using on-chip RBUS and static SBUS connections, which you can use to make a ring oscillator by making an external connection.
   - `INV_string_clocked_RBUS_SBUS.json` - Circuit with a series of four inverters but connected to each other switched clocks; it uses RBUS and switched SBUS connections
-  - `sw_cap_OTA_N_DINV1_L_NODE_RBUS_SBUS.json` - Switched capacitor amplifier using a two-stage OTA and on-chip switches and external capacitors; it uses RBUSes, switched SBUSes, internal pins, and external connections via NODES to realize and observe the circuit. 
+ 
 
 - **Device Sizing:**
-  - `empty_device_name_sizes.json` - Template for new size configurations
+  - `template_device_sizes.json` - Template for new size configurations
+  - `default_sizes.json` - Are the sizes the chip has baked in as defaults for EN = 0
   - `all_transistors_4x_sizes.json` - Example device sizing file
   - `INV_string_12_growing_sizes.json` - Example with progressively increasing transistor sizes
   - `OTA_N_DINV1_L_sizes.json` - Sizes that can be used for the switched capacitor example
+
 ## File Structure
 
 The project includes several important directories. Assuming you are using the `venv` with the name `venv-mosbiusv2tools` installed in your home directory `~`, the files are in the following folders; you can find the files in the GitHub repo easily as well. 
