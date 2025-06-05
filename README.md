@@ -65,7 +65,7 @@ Example JSON files are found in the `examples` directory in the repository. The 
 ### Device Sizing
 
 ```bash
-generate_sizes_probe_subckt [all_transistors_4x_sizes.json](http://_vscodecontentref_/1) output_sizes_spice.cir
+generate_sizes_probe_subckt examples/all_transistors_4x_sizes.json output_sizes_spice.cir
 ```
 
 ### Switch Matrix Configuration
@@ -99,6 +99,13 @@ This is a top-level schematic for the switched-capacitor amplifier test bench us
 ![alt text](img/image.png)
 
 The four subckts are instantiated here. Using the *MOSbiusV2Tools* scripts you can generate the necessary *spiceText subckt* descriptions from your `circuit.json` (see below).
+
+### Generating Input File for Scan Chain
+
+```bash
+generate_scan_chain_input examples/all_INV_RBUS_SBUS_v4.json examples/default.sizes scan.out
+```
+This generates a text file that you can use to drive your scan chain simulation; the first line is the value for the PROBE<2008>. 
 
 ## Circuit Description
 
